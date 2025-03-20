@@ -7,7 +7,7 @@ GIT_EMAIL = "samuelrdiniz@outlook.com"
 REPO_DIR = os.getenv("TEAMCITY_BUILD_CHECKOUTDIR", ".")  # Diretório do repositório
 BRANCH = "main"  # Nome da branch
 GITHUB_TOKEN = "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"  # Use um token do GitHub para autenticação
-GITHUB_REPO = "https://github.com/srockd/ci-cd-test.git"  # Substitua com seu repositório
+GITHUB_REPO = "github.com/srockd/ci-cd-test.git"  # Substitua com seu repositório
 
 def run_command(command, cwd=None):
     """Executa um comando no shell e retorna a saída."""
