@@ -1,11 +1,11 @@
 import os
 import subprocess
 
-# Configurações
-GIT_REPO_URL = "github.com/srockd/ci-cd-test.git"  # Substitua com seu repositório
+# Configurações obtidas das variáveis de ambiente do TeamCity
+GIT_REPO_URL = os.getenv("GIT_REPO_URL", "github.com/srockd/ci-cd-test.git")  # Substitua com seu repositório
 REPO_DIR = os.getenv("TEAMCITY_BUILD_CHECKOUTDIR", "Z:/buildAgent/work/5481815137319f3c/build")  # Diretório de destino absoluto
-BRANCH = "main"  # Branch a ser clonada
-GITHUB_TOKEN = "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"  # Token de acesso pessoal (PAT) do GitHub
+BRANCH = os.getenv("GIT_BRANCH", "main")  # Branch a ser clonada
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")  # Token de acesso pessoal (PAT) do GitHub
 
 def run_command(command, cwd=None):
     """Executa um comando no shell e captura a saída."""
@@ -18,9 +18,12 @@ def run_command(command, cwd=None):
 
 def clone_or_pull_repo():
     """Clona ou atualiza o repositório do GitHub via HTTPS com token."""
-    if GITHUB_TOKEN is None:
-        print("Erro: O token de acesso do GitHub não foi encontrado!")
+    if not GITHUB_TOKEN:
+        print("Erro: O token de acesso do GitHub não foi encontrado! Configure GITHUB_TOKEN no TeamCity.")
         exit(1)
+
+    # URL de autenticação com token
+    AUTH_GIT_URL = f"https://{GITHUB_TOKEN}@{GIT_REPO_URL}"
 
     # Se o diretório do repositório já existe, apenas faz pull
     if os.path.exists(os.path.join(REPO_DIR, ".git")):
@@ -28,7 +31,7 @@ def clone_or_pull_repo():
         run_command(f"git pull origin {BRANCH}", cwd=REPO_DIR)
     else:
         print("Clonando o repositório...")
-        git_clone_command = f"git clone https://{GITHUB_TOKEN}:x-oauth-basic@{GIT_REPO_URL[8:]}"
+        git_clone_command = f"git clone {AUTH_GIT_URL}"
         run_command(git_clone_command, cwd=os.path.dirname(REPO_DIR))
 
     print("Repositório atualizado com sucesso!")
