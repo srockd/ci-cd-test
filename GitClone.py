@@ -3,7 +3,7 @@ import subprocess
 
 # Configurações
 GIT_REPO_URL = "https://github.com/srockd/ci-cd-test.git"  # Substitua com seu repositório
-REPO_DIR = os.getenv("TEAMCITY_BUILD_CHECKOUTDIR", "/home/teamcity/build")  # Diretório do repositório
+REPO_DIR = os.getenv("TEAMCITY_BUILD_CHECKOUTDIR", "Z:/buildAgent/work/5481815137319f3c/build")  # Diretório de destino absoluto
 BRANCH = "main"  # Branch a ser clonada
 GITHUB_TOKEN = "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"  # Token de acesso pessoal (PAT) do GitHub
 
