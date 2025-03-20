@@ -1,16 +1,14 @@
 import os
 import subprocess
 
+# Definir nome e email do usuário Git
+GIT_USER_NAME = "srockd"
+GIT_USER_EMAIL = "samuelrdiniz@outlook.com"
 GIT_REPO_URL = "github.com/srockd/ci-cd-test.git"
-GITHUB_TOKEN = "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"  # Pegando o token do ambiente
 BRANCH = "main"
 
-if not GITHUB_TOKEN:
-    print("Erro: O token do GitHub não está definido.")
-    exit(1)
-
 def run_command(command, cwd=None):
-    """Executa um comando e exibe a saída."""
+    """Executa um comando no shell e exibe a saída."""
     result = subprocess.run(command, cwd=cwd, shell=True, text=True, capture_output=True)
     if result.returncode != 0:
         print(f"Erro ao executar: {command}")
@@ -18,17 +16,31 @@ def run_command(command, cwd=None):
         exit(1)
     return result.stdout
 
-def git_push():
-    """Faz commit e push no GitHub."""
-    print("Adicionando arquivos ao Git...")
-    run_command("git add .")
+# Configurar identidade do Git no ambiente TeamCity
+print("Configurando identidade do Git...")
+run_command(f'git config --global user.name "{GIT_USER_NAME}"')
+run_command(f'git config --global user.email "{GIT_USER_EMAIL}"')
 
-    print("Fazendo commit...")
-    run_command('git commit -m "Atualização automática via TeamCity"')
+# Adicionar mudanças ao Git
+print("Adicionando arquivos ao Git...")
+run_command("git add .")
 
-    print("Enviando alterações para o GitHub...")
-    push_command = f"git push https://{GITHUB_TOKEN}:x-oauth-basic@{GIT_REPO_URL} {BRANCH}"
-    run_command(push_command)
+# Fazer commit das mudanças
+print("Fazendo commit...")
+run_command('git commit -m "Atualização automática via TeamCity"')
 
-if __name__ == "__main__":
-    git_push()
+# Obter token do GitHub a partir da variável de ambiente
+GITHUB_TOKEN = "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"
+
+if not GITHUB_TOKEN:
+    print("Erro: O token do GitHub não está definido.")
+    exit(1)
+
+# Criar URL de autenticação com token
+REPO_WITH_AUTH = f"https://{GITHUB_TOKEN}@{GIT_REPO_URL}"
+
+# Fazer push para o repositório
+print("Enviando alterações para o GitHub...")
+run_command(f"git push {REPO_WITH_AUTH} {BRANCH}")
+
+print("Processo concluído com sucesso!")
