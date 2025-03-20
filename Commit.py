@@ -30,7 +30,7 @@ print("Fazendo commit...")
 run_command('git commit -m "Atualização automática via TeamCity"')
 
 # Obter token do GitHub a partir da variável de ambiente
-GITHUB_TOKEN = "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"
+GITHUB_TOKEN = "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"
 
 if not GITHUB_TOKEN:
     print("Erro: O token do GitHub não está definido.")

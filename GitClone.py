@@ -5,7 +5,7 @@ import subprocess
 GIT_REPO_URL = "github.com/srockd/ci-cd-test.git"  # Substitua com seu repositório
 REPO_DIR = os.getenv("TEAMCITY_BUILD_CHECKOUTDIR", "Z:/buildAgent/work/5481815137319f3c/build")  # Diretório de destino absoluto
 BRANCH = "main"  # Branch a ser clonada
-GITHUB_TOKEN = "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"  # Token de acesso pessoal (PAT) do GitHub
+GITHUB_TOKEN = "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"  # Token de acesso pessoal (PAT) do GitHub
 
 def run_command(command, cwd=None):
     """Executa um comando no shell e captura a saída."""
