@@ -1,16 +1,16 @@
-import subprocess
 import os
+import subprocess
 
-# Configurar usuário do Git
-GIT_USER = "srockd"
-GIT_EMAIL = "samuelrdiniz@outlook.com"
-REPO_DIR = os.getenv("TEAMCITY_BUILD_CHECKOUTDIR", ".")  # Diretório do repositório
-BRANCH = "main"  # Nome da branch
-GITHUB_TOKEN = "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"  # Use um token do GitHub para autenticação
-GITHUB_REPO = "github.com/srockd/ci-cd-test.git"  # Substitua com seu repositório
+GIT_REPO_URL = "github.com/srockd/ci-cd-test.git"
+GITHUB_TOKEN = "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"  # Pegando o token do ambiente
+BRANCH = "main"
+
+if not GITHUB_TOKEN:
+    print("Erro: O token do GitHub não está definido.")
+    exit(1)
 
 def run_command(command, cwd=None):
-    """Executa um comando no shell e retorna a saída."""
+    """Executa um comando e exibe a saída."""
     result = subprocess.run(command, cwd=cwd, shell=True, text=True, capture_output=True)
     if result.returncode != 0:
         print(f"Erro ao executar: {command}")
@@ -18,33 +18,17 @@ def run_command(command, cwd=None):
         exit(1)
     return result.stdout
 
-def git_commit_and_push():
-    """Faz commit e push das mudanças no GitHub."""
-    os.chdir(REPO_DIR)  # Muda para o diretório do repositório
-
-    # Configurar nome e e-mail do Git
-    run_command(f'git config --global user.name "{GIT_USER}"')
-    run_command(f'git config --global user.email "{GIT_EMAIL}"')
-
-    # Adicionar mudanças
+def git_push():
+    """Faz commit e push no GitHub."""
+    print("Adicionando arquivos ao Git...")
     run_command("git add .")
 
-    # Verificar se há mudanças para commit
-    status = run_command("git status --porcelain")
-    if not status.strip():
-        print("Nenhuma mudança para commit.")
-        return
-
-    # Criar commit
+    print("Fazendo commit...")
     run_command('git commit -m "Atualização automática via TeamCity"')
 
-    # Configurar URL remota com autenticação via token
-    remote_url = f"https://{GITHUB_TOKEN}@{GITHUB_REPO}"
-    run_command(f"git remote set-url origin {remote_url}")
-
-    # Fazer push
-    run_command(f"git push origin {BRANCH}")
-    print("Mudanças enviadas com sucesso!")
+    print("Enviando alterações para o GitHub...")
+    push_command = f"git push https://{GITHUB_TOKEN}:x-oauth-basic@{GIT_REPO_URL} {BRANCH}"
+    run_command(push_command)
 
 if __name__ == "__main__":
-    git_commit_and_push()
+    git_push()
